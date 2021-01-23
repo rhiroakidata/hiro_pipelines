@@ -1,0 +1,23 @@
+apiVersion: machinelearning.seldon.io/v1
+kind: SeldonDeployment
+metadata:
+  name: iris-model
+  namespace: seldon
+spec:
+  name: iris
+  predictors:
+  - graph:
+      implementation: SKLEARN_SERVER
+      modelUri: s3://bucket-name/folder_name/iris-model.pkl
+      name: classifier
+    name: default
+    replicas: 1
+END
+
+# If deploy_step doesn't work, try to use following commands for deployment
+# kubectl apply -f <path to this yaml>
+# kubectl rollout status deploy/$(kubectl get deploy -l seldon-deployment-id=sklearn -o jsonpath='{.items[0].metadata.name}')
+
+# References
+# https://docs.seldon.io/projects/seldon-core/en/stable/examples/server_examples.html
+# https://github.com/SeldonIO/seldon-core

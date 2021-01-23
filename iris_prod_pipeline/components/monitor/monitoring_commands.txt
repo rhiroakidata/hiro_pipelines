@@ -1,0 +1,7 @@
+Instalar Helm CLI
+
+https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/index.html
+
+HELM Analytics Chart
+
+https://docs.seldon.io/projects/seldon-core/en/v1.1.0/analytics/analytics.html
