@@ -1,19 +1,29 @@
-import argparse
-import joblib
+import click, joblib
 import numpy as np
 
 from sklearn.model_selection import cross_val_predict, StratifiedKFold
 from sklearn.tree import DecisionTreeClassifier
 
-def fit_decision_tree(X_train, y_train, X_test, dt_filename, n_splits):
+@click.command()
+@click.option('--X_train')
+@click.option('--y_train')
+@click.option('--X_test')
+@click.option('--y_train')
+@click.option('--dt_filename')
+@click.option('--n_splits')
+def fit_decision_tree(x_train, y_train, x_test, dt_filename, n_splits):
     dt_model = DecisionTreeClassifier()
-    cv = StratifiedKFold(n_splits=n_splits, shuffle=True)
-    y_scores = cross_val_predict(dt_model, X_train, y_train, cv = cv,
-                             method = 'decision_function')
 
-    dt_fit = dt_model.fit(X_train, y_train)
+    x_train = np.load(x_train, allow_pickle=True)
+    y_train = np.load(y_train, allow_pickle=True)
+    x_test = np.load(x_test, allow_pickle=True)
 
-    dt_predict = dt_fit.predict(X_test)
+    cv = StratifiedKFold(n_splits=int(n_splits), shuffle=True)
+    y_scores = cross_val_predict(dt_model, x_train, y_train, cv = cv)
+
+    dt_fit = dt_model.fit(x_train, y_train)
+
+    dt_predict = dt_fit.predict(x_test)
 
     dt_converted = joblib.dump(dt_fit, dt_filename)
 
@@ -22,13 +32,6 @@ def fit_decision_tree(X_train, y_train, X_test, dt_filename, n_splits):
     np.save("dt_y_scores.npy", y_scores)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--X_train')
-    parser.add_argument('--y_train')
-    parser.add_argument('--X_test')
-    parser.add_argument('--dt_filename')
-    args = parser.parse_args()
-
     print('Training Decision Tree...')
-    fit_decision_tree(args.X_train, args.y_train, args.X_test)
+    fit_decision_tree()
 

@@ -1,14 +1,25 @@
-import argparse
+import argparse, click
 import numpy as np
+import pandas as pd
 
 from sklearn.model_selection import train_test_split
 
+@click.command()
+@click.option('--iris')
 def transform_data(iris):
-    transform = {'setosa': 0, 'versicolor': 1, 'virginica': 2}
-    iris['species_num'] = iris['species'].map(transform)
+    iris = np.load(iris, allow_pickle=True)
+
+    iris = pd.DataFrame(iris, columns=[
+        'sepal length (cm)', 
+        'sepal width (cm)', 
+        'petal length (cm)', 
+        'petal width (cm)',
+        'species_num',
+        'species'
+        ])
 
     data = iris.iloc[:, :-1]
-    target = iris['species']
+    target = iris.species
 
     X_train, X_test, y_train, y_test = train_test_split(data, target, test_size=0.2)
 
@@ -17,11 +28,15 @@ def transform_data(iris):
     np.save('X_test.npy', X_test)
     np.save('y_test.npy', y_test)
 
+    # return X_train, y_train, X_test, y_test
+    return X_train, X_test, y_train, y_test
+
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--iris')
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('--iris')
+    # args = parser.parse_args()
 
     print('Transforming datas...')
-    transform_data(args.iris)
+    # transform_data(args.iris)
+    transform_data()
